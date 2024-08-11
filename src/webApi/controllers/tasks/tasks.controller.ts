@@ -15,12 +15,12 @@ export class TasksController {
     }
 
     @Get()
-    public getAllTasks(@Query() params: QueryParamsTaskDto): Task[] 
+    public async getAllTasks(@Query() params: QueryParamsTaskDto): Promise<Task[]> 
     {
-        if(Object.keys(params).length)
-            return this._taskService.getTasks(params);
-        else
-            return this._taskService.getAllTasks();
+        // if(Object.keys(params).length)
+        //     return this._taskService.getTasks(params);
+        // else
+            return await this._taskService.getAllTasks();
 
     }
 
