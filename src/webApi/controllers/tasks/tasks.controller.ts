@@ -17,34 +17,30 @@ export class TasksController {
     @Get()
     public async getAllTasks(@Query() params: QueryParamsTaskDto): Promise<Task[]> 
     {
-        // if(Object.keys(params).length)
-        //     return this._taskService.getTasks(params);
-        // else
-            return await this._taskService.getAllTasks();
-
+        return await this._taskService.getAllTasks();
     }
 
     @Get(':id')
-    public getOneTask(@Param('id') id: string): Task 
+    public async getOneTask(@Param('id') id: string): Promise<Task> 
     {
-        return this._taskService.getOneTask(id);
+        return await this._taskService.getOneTask(id);
     }
 
     @Delete(':id')
-    public removeTask(@Param('id') id: string): boolean 
+    public async removeTask(@Param('id') id: string): Promise<boolean> 
     {
-        return this._taskService.removeTask(id);
+        return await this._taskService.removeTask(id);
     }
     
     @Post()
-    public insertTask(@Body() body: CreateTaskDto): Task
+    public async insertTask(@Body() body: CreateTaskDto): Promise<Task>
     {
-        return this._taskService.insertTask(body.title, body.description);
+        return await this._taskService.insertTask(body.title, body.description);
     }
 
     @Patch('/:id')
-    public updateTask(@Param('id') id: string, @Body() body: UpdateTaskDto): Task
+    public async updateTask(@Param('id') id: string, @Body() body: UpdateTaskDto): Promise<Task>
     {
-        return this._taskService.updateTask(id, body);
+        return await this._taskService.updateTask(id, body);
     }
 }

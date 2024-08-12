@@ -16,7 +16,6 @@ export class TasksService {
 
     constructor(taskRepository: TaskRepository){
         this._taskRepository = taskRepository;
-        console.log(this._taskRepository);
     }
 
     public async getAllTasks(): Promise<Task[]>
@@ -25,41 +24,40 @@ export class TasksService {
         return result;
     }
 
-    public getTasks(query: QueryParamsTaskDto): Task[]
+    public async getTasks(params: QueryParamsTaskDto): Promise<Task[]>
     {
-        const { status, search } = query
+        const { status, search } = params;
 
-        let tasks = this.tasks;
+        const query = this._taskRepository.createQueryBuilder('task');
 
         if(status)
-            tasks = tasks.filter(x => x.status === status);
+            query.andWhere('task.status = :status', {status });
 
         if(search)
-            tasks = tasks = tasks.filter(x => {
-                if(x.title.includes(search) || x.description.includes(search))
-                    return true;
-                return false;
-            });
+            query.andWhere('task.title LIKE :search OR task.description like :search', { search: `%${search}%` });
 
-        return tasks;
+        const result = await query.getMany();
+        return result;
     }
 
-    public getOneTask(id: string): Task
+    public async getOneTask(id: string): Promise<Task>
     {
-        const task = this.tasks.find(x => x.id === id);
+        const task = await this._taskRepository.findOneBy({id: id});
         if(task)
             return task;
 
-        throw new NotFoundException("N]ao encontrado");
+        throw new NotFoundException("Nao encontrado");
     }
 
-    public removeTask(id: string): boolean
+    public async removeTask(id: string): Promise<boolean>
     {
-        if(!this.tasks.some(x => x.id === id))
-            return false;
-        
-        this.tasks = this.tasks.filter(x => x.id !== id);
-        return true
+        const task = await this._taskRepository.findOneBy({id: id});
+        if(!task)
+            throw new NotFoundException("Nao encontrado");
+
+        //Usando o metodo delete tende a ser mais rapido pois não [e necessario buscar antes]
+        await this._taskRepository.remove(task);
+        return true;
     }
 
     public insertTask(title: string, description: string): Task
@@ -71,24 +69,23 @@ export class TasksService {
             status: TaskStatus.OPEN
         };
 
-        this.tasks.push(task);
+        this._taskRepository.insert(task);
 
         return task;
     }
 
-    public updateTask(id: string, body: UpdateTaskDto): Task
+    public async updateTask(id: string, body: UpdateTaskDto): Promise<Task>
     {
         const { status } = body;
 
-        if(!this.tasks.some(x => x.id === id))
-            return null;
+        let task = await this._taskRepository.findOneBy({id: id});
 
-        const task = this.tasks.find(x => x.id === id);    
-        this.tasks = this.tasks.filter(x => x.id !== id);
+        if(!task)
+            throw new NotFoundException("Nao encontrado");
         
-        task.status = status
+        task.status = status;
 
-        this.tasks.push(task);
+        this._taskRepository.save(task);
 
         return task;
     }
