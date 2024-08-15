@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TasksModule } from './webApi/modules/tasks/tasks.module';
-import { TasksService } from './application/useCases/tasks/tasks.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Task } from './domain/models/task.entity';
+import { UserModule } from './webApi/modules/user/user.module';
+import { DistributeModule } from './webApi/modules/distribute/distribute.module';
 
 @Module({
   imports: [
     TasksModule,
+    UserModule,
+    DistributeModule,
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: 'localhost',
@@ -19,7 +21,7 @@ import { Task } from './domain/models/task.entity';
       },
       autoLoadEntities: true,
       synchronize: true
-    })
+    }),
   ]
 })
 export class AppModule {}

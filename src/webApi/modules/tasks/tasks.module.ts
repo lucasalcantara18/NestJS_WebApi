@@ -8,6 +8,7 @@ import { Task } from 'src/domain/models/task.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Task])],
   controllers: [TasksController],
-  providers: [TasksService, TaskRepository]
+  providers: [TasksService, TaskRepository],
+  exports: [TaskRepository]
 })
 export class TasksModule {}

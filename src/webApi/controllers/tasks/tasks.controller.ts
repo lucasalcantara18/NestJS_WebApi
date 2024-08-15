@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-import { TasksService } from '../../../application/useCases/tasks/tasks.service';
 import { Task } from 'src/domain/models/task.entity';
 import { CreateTaskDto } from 'src/domain/dto/createTasksDto';
 import { UpdateTaskDto } from 'src/domain/dto/updateTasksDto';
 import { QueryParamsTaskDto } from 'src/domain/dto/queryParamsTasksDto';
+import { TasksService } from 'src/application/useCases/tasks/tasks.service';
 
 @Controller('tasks')
 export class TasksController {

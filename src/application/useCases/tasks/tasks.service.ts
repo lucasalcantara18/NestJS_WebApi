@@ -7,11 +7,11 @@ import { Task } from 'src/domain/models/task.entity';
 import { TaskRepository } from 'src/infrastructure/dataAccess/repository/task.repository';
 import { Like } from 'typeorm';
 import { ulid } from 'ulid';
+import { ITaskService } from './itasks.service';
 
 @Injectable()
-export class TasksService {
+export class TasksService implements ITaskService {
 
-    private tasks: Task[] = [];
     readonly _taskRepository: TaskRepository;
 
     constructor(taskRepository: TaskRepository){
@@ -60,16 +60,17 @@ export class TasksService {
         return true;
     }
 
-    public insertTask(title: string, description: string): Task
+    public async insertTask(title: string, description: string): Promise<Task>
     {
         const task: Task = {
             description: description,
             title: title,
             id: ulid(),
-            status: TaskStatus.OPEN
+            status: TaskStatus.OPEN,
+            user: null
         };
 
-        this._taskRepository.insert(task);
+        await this._taskRepository.insert(task);
 
         return task;
     }
