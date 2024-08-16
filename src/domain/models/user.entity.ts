@@ -10,7 +10,7 @@ export class User {
     @Column()
     nome: string;
 
-    @Column()
+    @Column({unique: true})
     login: string;
 
     @Column()

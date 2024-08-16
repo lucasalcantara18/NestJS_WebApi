@@ -3,12 +3,14 @@ import { TasksModule } from './webApi/modules/tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './webApi/modules/user/user.module';
 import { DistributeModule } from './webApi/modules/distribute/distribute.module';
+import { AuthModule } from './webApi/modules/auth/auth.module';
 
 @Module({
   imports: [
     TasksModule,
     UserModule,
     DistributeModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: 'localhost',

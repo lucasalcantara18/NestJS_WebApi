@@ -18,8 +18,6 @@ export class DistributeService implements IDistributeService {
     async findUserTask(idUser: string): Promise<User> {
         const user = await this._userRepository.findOneBy({id: idUser});
 
-        console.log(user)
-
         if(!user)
             throw new NotFoundException("Nao encontrado");  
 
