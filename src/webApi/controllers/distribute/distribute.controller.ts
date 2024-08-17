@@ -1,8 +1,11 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/application/decorators/get-user.decorator';
 import { DistributeService } from 'src/application/useCases/distribute/distribute.service';
 import { User } from 'src/domain/models/user.entity';
 
 @Controller('distribute')
+@UseGuards(AuthGuard())
 export class DistributeController {
     
     readonly _distributedService: DistributeService;
@@ -11,21 +14,21 @@ export class DistributeController {
         this._distributedService = distributedService;
     }
 
-    @Get(':idUser')
-    public async getUserTasks(@Param('idUser') idUser: string): Promise<User> 
+    @Get()
+    public async getUserTasks(@GetUser() user: User): Promise<User> 
     {
-        return await this._distributedService.findUserTask(idUser);
+        return await this._distributedService.findUserTask(user.id);
     }
 
-    @Delete('user/:idUser/task/:idTask/remove')
-    public async removeTask(@Param('idUser') idUser: string, @Param('idTask') idTask: string): Promise<boolean> 
+    @Delete('/task/:idTask/remove')
+    public async removeTask(@GetUser() user: User, @Param('idTask') idTask: string): Promise<boolean> 
     {
-        return await this._distributedService.removeUserTask(idUser, idTask);
+        return await this._distributedService.removeUserTask(user.id, idTask);
     }
 
-    @Post('user/:idUser/task/:idTask/add')
-    public async insertTask(@Param('idUser') idUser: string, @Param('idTask') idTask: string): Promise<boolean> 
+    @Post('/task/:idTask/add')
+    public async insertTask(@GetUser() user: User, @Param('idTask') idTask: string): Promise<boolean> 
     {
-        return await this._distributedService.setUserTask(idUser, idTask);
+        return await this._distributedService.setUserTask(user.id, idTask);
     }
 }

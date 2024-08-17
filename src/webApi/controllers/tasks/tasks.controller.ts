@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Task } from 'src/domain/models/task.entity';
 import { CreateTaskDto } from 'src/domain/dto/createTasksDto';
 import { UpdateTaskDto } from 'src/domain/dto/updateTasksDto';
 import { QueryParamsTaskDto } from 'src/domain/dto/queryParamsTasksDto';
 import { TasksService } from 'src/application/useCases/tasks/tasks.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
     
     readonly _taskService: TasksService;

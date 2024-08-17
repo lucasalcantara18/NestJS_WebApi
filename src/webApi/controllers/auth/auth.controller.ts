@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/application/useCases/auth/auth.service';
 import { SignInDto } from 'src/domain/dto/signInDto';
 import { SignUpDto } from 'src/domain/dto/signUpDto';
@@ -19,7 +20,7 @@ export class AuthController {
     }
 
     @Post('/signIn')
-    public async signIn(@Body() body: SignInDto): Promise<boolean>
+    public async signIn(@Body() body: SignInDto): Promise<{ accessToken: string }>
     {
         return await this._authService.signIn(body.login, body.senha);
     }
@@ -28,6 +29,12 @@ export class AuthController {
     public async signOut(): Promise<boolean>
     {
         return await this._authService.signOut();
+    }
+
+    @Post('/test')
+    @UseGuards(AuthGuard())
+    public test(@Req() req){
+        console.log(req);
     }
 
 }

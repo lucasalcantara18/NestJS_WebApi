@@ -5,17 +5,21 @@ import { UserRepository } from 'src/infrastructure/dataAccess/repository/user.re
 import { ulid } from 'ulid';
 import { User } from 'src/domain/models/user.entity';
 import * as bcrypt from "bcrypt";
+import { JwtService } from '@nestjs/jwt';
+import { IJwtPayload } from 'src/domain/interfaces/ijwtpayload';
 
 @Injectable()
 export class AuthService implements IAuthService {
 
     readonly _userRepository: UserRepository;
+    readonly _jwtService: JwtService;
 
-    constructor(userRepository: UserRepository){
+    constructor(userRepository: UserRepository, jwtService: JwtService){
         this._userRepository = userRepository;
+        this._jwtService = jwtService;
     }
 
-    async signIn(login: string, senha: string): Promise<boolean> {
+    async signIn(login: string, senha: string): Promise<{ accessToken: string }> {
         
         var user = await this._userRepository.findOneBy({login: login});
 
@@ -27,7 +31,10 @@ export class AuthService implements IAuthService {
         if(!isMatch)
             throw new NotFoundException("Incorrect password");
 
-        return true;
+        const payload: IJwtPayload = { username: login };
+        const accessToken = await this._jwtService.sign(payload);
+        
+        return { accessToken };
     }
 
     async SignUp(dto: SignUpDto): Promise<boolean> {
